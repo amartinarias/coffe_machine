@@ -1,6 +1,6 @@
 from menu import *
 
-payments = 0
+total_earned = 0
 
 coffee_machine = True
 
@@ -14,6 +14,7 @@ def enough_ingredients(client_ingredient):
     for item in client_ingredient:
         if resources[item] < client_ingredient[item]:
             print(f"Sorry there is not enough {item}.")
+            return True
 
 
 def counting_coins():
@@ -38,17 +39,35 @@ def paying_bill(payment):
     """
     if payment < choice['cost']:
         print("Sorry that's not enough money. Money refunded.")
+        return False
     elif payment == choice['cost']:
-        print("Thank you for your purchase.")
+        global total_earned
+        total_earned += choice['cost']
+        return True
     else:
-        print(f"Here is your change: {round(payment - choice['cost'], 2)}$ Enjoy your coffee!")
+        total_earned += choice['cost']
+        print(f"Here is your change: {round(payment - choice['cost'], 2)}$")
+        return True
+
+
+def make_coffee(customer_order, drink):
+    """
+    Returns the updated quantity of the resources
+    :param customer_order: item entered by user
+    :param drink: ingredients used to make the drink
+    :return: the confirmation of the order and the resources are updated.
+    """
+    for item in choice['ingredients']:
+        resources[item] -= drink[item]
+    print(f"Here's your {customer_order}")
 
 
 # Main App Logic
 while coffee_machine:
     customer_order = input("What would you like to drink? (Espresso/Latte/Cappuccino) ").lower()
     if customer_order == "report":
-        print(f"Resources: {resources['water']}ml, {resources['milk']}ml, {resources['coffee']}g. Total Payment: {payments}")
+        print(f"Resources: {resources['water']}ml, {resources['milk']}ml, {resources['coffee']}g. "
+              f"Total Payment: {total_earned}")
     elif customer_order == "off":
         coffee_machine = False
         print("Thanks for using this machine")
@@ -56,7 +75,9 @@ while coffee_machine:
         choice = MENU[customer_order]
         if not enough_ingredients(choice["ingredients"]):
             payment = counting_coins()
-            paying_bill(payment)
+            if paying_bill(payment):
+                make_coffee(customer_order, choice["ingredients"])
+
 
 
 
