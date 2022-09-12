@@ -41,7 +41,7 @@ def paying_bill(payment):
     elif payment == choice['cost']:
         print("Thank you for your purchase.")
     else:
-        print(f"Here is your change: {round(payment - choice['cost'], 2)}$")
+        print(f"Here is your change: {round(payment - choice['cost'], 2)}$ Enjoy your coffee!")
 
 
 # Main App Logic
